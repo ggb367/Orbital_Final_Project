@@ -4,7 +4,7 @@ import numpy as np
 import numpy.linalg as lg
 from scipy.integrate import ode
 
-import utils.helpers as hlp
+import utils as hlp
 
 def high_fidelity_orbit_prop(r_0, v_0, T0, tF, dT, conds):
     """
@@ -26,27 +26,35 @@ def high_fidelity_orbit_prop(r_0, v_0, T0, tF, dT, conds):
         r = lg.norm(Y[0:3])
 
         sat2sun_norm, sat2sun, sun_range_norm, sun_range = hlp.sun_3body_pert(t, Y[0:3], conds.epoch)
-        a_d = hlp.drag_pert(Y[0:3], [Y[3:6]], conds.density_table, conds.C_D, conds.A_m)
+        if conds.drag:
+            a_d = hlp.drag_pert(Y[0:3], [Y[3:6]], conds.density_table, conds.C_D, conds.A_m)
+            a_d = np.squeeze(a_d)
+        else:
+            a_d = np.zeros([3,])
+
         a_j = hlp.J2J3_Pert(Y[0:3], conds.J2, conds.J3)
-        a_srp = hlp.SRP_Pert(Y[0:3], sun_range, conds.C_r, conds.A_m)
-        a_other = np.squeeze(a_d+a_srp+a_j, axis=0)
+        if conds.srp:
+            a_srp = hlp.SRP_Pert(Y[0:3], sun_range, conds.C_r, conds.A_m)
+            a_srp = np.squeeze(a_srp)
+        else:
+            a_srp = np.zeros([3,])
         if conds.sun:
             a_sun = [hlp.sun.mu*(sat2sun[0]/((sat2sun_norm)**3)-sun_range[0]/sun_range_norm**3),
                      hlp.sun.mu*(sat2sun[1]/((sat2sun_norm)**3)-sun_range[1]/sun_range_norm**3),
                      hlp.sun.mu*(sat2sun[2]/((sat2sun_norm)**3)-sun_range[2]/sun_range_norm**3)]
         else:
-            a_sun = [0, 0, 0]
+            a_sun = np.zeros([3,])
         if conds.moon:
             sat2moon_norm, sat2moon, moon_range_norm, moon_range = hlp.moon_3body_pert(t, Y[0:3], conds.epoch)
             a_moon = [hlp.moon.mu*(sat2moon[0]/((sat2moon_norm)**3)-moon_range[0]/moon_range_norm**3),
                       hlp.moon.mu*(sat2moon[1]/((sat2moon_norm)**3)-moon_range[1]/moon_range_norm**3),
                       hlp.moon.mu*(sat2moon[2]/((sat2moon_norm)**3)-moon_range[2]/moon_range_norm**3)]
         else:
-            a_moon = [0, 0, 0]
+            a_moon = np.zeros([3,])
         # print(moon_range_norm)
-        dY[3] = (-mu*Y[0]/r**3)+a_sun[0]+a_other[0]+a_moon[0]
-        dY[4] = (-mu*Y[1]/r**3)+a_sun[1]+a_other[1]+a_moon[1]
-        dY[5] = (-mu*Y[2]/r**3)+a_sun[2]+a_other[2]+a_moon[2]
+        dY[3] = (-mu*Y[0]/r**3)+a_sun[0]+a_moon[0]+a_d[0]+a_srp[0]+a_j[0]
+        dY[4] = (-mu*Y[1]/r**3)+a_sun[1]+a_moon[1]+a_d[1]+a_srp[1]+a_j[1]
+        dY[5] = (-mu*Y[2]/r**3)+a_sun[2]+a_moon[2]+a_d[2]+a_srp[2]+a_j[2]
         return dY
 
     def derivFcn(t, y):

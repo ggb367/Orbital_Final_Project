@@ -184,11 +184,11 @@ def SRP_Pert(r, r_sun, C_r, A_m):  # returns a vecotr of solar radiation pressur
     gamma = up_shadow(r, r_sun)
     if gamma==0:
         return [0, 0, 0]  # save a few cpu cycles
-    return np.array(np.multiply(-1*earth.p_srp*C_r*A_m*gamma, np.divide(r_sun-r, lg.norm(r_sun-r))))
+    return np.array(np.multiply(-1*earth.p_srp*C_r*A_m*gamma, np.divide(r_sun+r, lg.norm(r_sun+r))))
 
 def drag_pert(r, v, density_table, C_D, A_m):  # returns a vector of drag perturbation
     if isinstance(r, np.ndarray) or isinstance(r, list):
-        radius = np.linalg.norm(r)
+        radius = np.linalg.norm(r)-earth.radius
 
     base_alt = np.array(density_table['Base Altitude'])
     scl_hgt = np.array(density_table['Scale Height'])
