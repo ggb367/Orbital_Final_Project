@@ -1,9 +1,9 @@
-import pandas as pd
 import numpy as np
+import pandas as pd
+from skyfield.api import load
 
 import utils.helpers as hlp
 import utils.propagator as prop
-from skyfield.api import load
 
 # Remember: All of this is in the J2000 Frame
 
@@ -32,7 +32,7 @@ elements = np.empty([4, 6])
 elements[0, :] = [6763, 0.001, 50, 0, 0, 0] # LEO
 elements[1, :] = [26560, 0.001, 55, 0, 0, 0] # MEO
 elements[2, :] = [42164, 0.01, 0.5, -120, 0, 0] # GEO
-elements[3, :] = [26000, 0.72, 75, 90, -90, 0] # Molniya
+elements[3, :] = [26000, 0.72, 75, 90, -90, 0] # Molyniya
 
 types = ['LEO', 'MEO', 'GEO', 'Molyniya']
 
