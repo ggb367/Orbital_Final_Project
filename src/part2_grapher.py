@@ -7,6 +7,7 @@ pos_vel = np.load('part2.npz')
 
 r_vec = pos_vel['r']
 v_vec = pos_vel['v']
+print(hlp.cart2elm(r_vec[-1, :], v_vec[-1, :], hlp.earth.mu))
 
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')

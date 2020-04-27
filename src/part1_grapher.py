@@ -26,20 +26,20 @@ for case in cases:
     i=0
     time = np.arange(0, 5, 10/(60*24))
     ls = [(0, (5, 10)), '--', 'solid', (0, (1, 1)),  (0, (3, 10, 1, 10)), (0, (1, 10))]
-    lables = ["Two Body", "Drag", "J2", "J2 & J3", "SRP", "Sun & Moon"]
+    labels = ["Two Body", "Drag", "J2", "J2 & J3", "SRP", "Sun & Moon"]
     plt.figure()
     for item in subset:
         exec("%s = (pos_data_dic[key_names[i]]-true)" % (item))
         temp = []
         exec("for row in range(np.shape(%s)[0]): temp.append(np.linalg.norm(%s[row,:]))"% (item, item))
         exec("%s = temp" % (item))
-        exec("plt.plot(time, (%s), label = lables[i], linestyle = ls[i])" % item)
+        exec("plt.plot(time, (%s), label = labels[i], linestyle = ls[i])" % item)
         i = i+1
 
     plt.yscale('log')
     plt.ylabel('Error (km)')
     plt.xlabel("Time, Days from Epoch")
-    if case is 'Molyniya':
+    if case is 'Molyniya':  # This is stupid but I'm lazy
         plt.title("Molniya Force Model Comparisons")
     else:
         plt.title(case+" Force Model Comparisons")

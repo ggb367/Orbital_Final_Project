@@ -20,7 +20,7 @@ class conditions:
     C_r = 1.5
     C_D = 2
     # set to 0 to turn off J2 or J3
-    J2 = 0#hlp.earth.J2
+    J2 = hlp.earth.J2
     J3 = hlp.earth.J3
     # set to False to turn off the moon, sun, drag, or srp
     sun = True
@@ -40,18 +40,16 @@ types = ['LEO', 'MEO', 'GEO', 'Molyniya']
 T0 = 0
 TF = 5*24*3600
 dT = 600
-# for row in range(np.shape(elements)[0]):
-r_0, v_0 = hlp.elm2cart(elements[0, :], hlp.earth.mu)
-try:
-    r_vec, v_vec = prop.high_fidelity_orbit_prop(r_0, v_0, T0, TF, dT, conditions)
-except RuntimeError as e:
-    print(e)
+for row in range(np.shape(elements)[0]):
+    r_0, v_0 = hlp.elm2cart(elements[row, :], hlp.earth.mu)
+    try:
+        r_vec, v_vec = prop.high_fidelity_orbit_prop(r_0, v_0, T0, TF, dT, conditions)
+    except RuntimeError as e:
+        print(e)
 #
 #     with open('SRP_'+types[row]+'.npz', 'wb') as f:
 #         np.savez(f, x=r_vec, y=v_vec)
 #         # np.save('Data/true_'+types[row]+'_vel', v_vec)
-#     # df = pd.DataFrame(data={'Position': r_vec, 'Velocity': v_vec})
-#     # df.to_csv('Data/true_'+types[row]+'.csv')
 #     print("iteration complete!")
 
 fig = plt.figure()
