@@ -215,7 +215,6 @@ def sun_3body_pert(t, r, epoch):  # returns the thrid body perturbations as a re
     return sat2sun_norm, sat2sun, sun_range_norm, sun_range
 
 def moon_3body_pert(t, r, epoch):  # returns the thrid body perturbations as a result of the sun
-    # TODO: FIX THIS SHIT
     t = t/86400+epoch - 2400000.5# MJD
     T = MJDCenturies(t)
     lam = np.mod(np.deg2rad(218.32+481267.8813*T+

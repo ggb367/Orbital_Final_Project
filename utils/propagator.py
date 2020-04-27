@@ -4,7 +4,7 @@ import numpy as np
 import numpy.linalg as lg
 from scipy.integrate import ode
 
-import utils as hlp
+import utils.helpers as hlp
 
 def high_fidelity_orbit_prop(r_0, v_0, T0, tF, dT, conds):
     """
@@ -55,6 +55,8 @@ def high_fidelity_orbit_prop(r_0, v_0, T0, tF, dT, conds):
         dY[3] = (-mu*Y[0]/r**3)+a_sun[0]+a_moon[0]+a_d[0]+a_srp[0]+a_j[0]
         dY[4] = (-mu*Y[1]/r**3)+a_sun[1]+a_moon[1]+a_d[1]+a_srp[1]+a_j[1]
         dY[5] = (-mu*Y[2]/r**3)+a_sun[2]+a_moon[2]+a_d[2]+a_srp[2]+a_j[2]
+        if lg.norm(Y[0:3])<hlp.earth.radius:
+            warnings.warn('The orbit radius is smaller than the radius of the earth, the spacecraft has crashed!')
         return dY
 
     def derivFcn(t, y):
